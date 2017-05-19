@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RectangleProgressDrawable">
+        <attr name="backcolor" format="color"/>
+        <attr name="currentvalue" format="float"/>
+        <attr name="maxvalue" format="float"/>
+        <attr name="valuecolor" format="color"/>
+        <attr name="valueunit" format="string"/>
+        <attr name="title" format="string"/>
+        <attr name="unitcolor" format="color"/>
+        <attr name="titlecolor" format="color"/>
+        <attr name="titlesize" format="dimension"/>
+        <attr name="unixsize" format="dimension"/>
+        <attr name="duration" format="integer"/>
+    </declare-styleable>
+</resources>
