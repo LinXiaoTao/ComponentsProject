@@ -18,6 +18,7 @@ import android.support.v4.util.Pools;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.animation.OvershootInterpolator;
 
 import com.leo.componentsproject.R;
@@ -46,8 +47,8 @@ public class RectangleProgressDrawable extends Drawable {
     private float mTextPadding;
     private int mTitleSize;
     private int mUnixTextSize;
-    private int mMinTextSize;
     private int mDuration;
+    private int mValueGravity;
 
     private OvershootInterpolator mOvershootInterpolator;
     private int mCurrentState = STATUE_NONE;
@@ -64,6 +65,7 @@ public class RectangleProgressDrawable extends Drawable {
     private Paint mTextPaint;
     private Rect mBackRect;
     private Rect mProgressRect;
+    private float mUnixTextX;
 
 
     private static final int STATUE_NONE = 0;
@@ -87,7 +89,11 @@ public class RectangleProgressDrawable extends Drawable {
     @Override
     public void draw(@NonNull Canvas canvas) {
 
-        mBottomText = mCurrentValue + mValueUnit;
+        if (TextUtils.isEmpty(mValueUnit)) {
+            mBottomText = String.valueOf(mCurrentValue);
+        } else {
+            mBottomText = mCurrentValue + mValueUnit;
+        }
         calculate();
 
         //绘制背景
@@ -105,7 +111,7 @@ public class RectangleProgressDrawable extends Drawable {
         if (!TextUtils.isEmpty(mBottomText)) {
             mTextPaint.setTextSize(mUnixTextSize);
             mTextPaint.setColor(mUnitColor);
-            canvas.drawText(mBottomText, mProgressRect.right + mTextPadding, mProgressRect.centerY() + mBottomHeight / 2f, mTextPaint);
+            canvas.drawText(mBottomText, mUnixTextX, mProgressRect.centerY() + mBottomHeight / 2f, mTextPaint);
         }
 
 
@@ -127,77 +133,89 @@ public class RectangleProgressDrawable extends Drawable {
     }
 
 
-    public void setBackColor(int backColor) {
+    public RectangleProgressDrawable setBackColor(int backColor) {
         mBackColor = backColor;
-        mBackPaint.setColor(mBackColor);
-        invalidateSelf();
+        return this;
     }
 
-    public void setProgressColor(int progressColor) {
+    public RectangleProgressDrawable setProgressColor(int progressColor) {
         mProgressColor = progressColor;
-        mProgressPaint.setColor(mProgressColor);
-        invalidateSelf();
+        return this;
     }
 
-    public void setMaxValue(float maxValue) {
+    public RectangleProgressDrawable setMaxValue(float maxValue) {
         mMaxValue = maxValue;
-        invalidateSelf();
+        return this;
     }
 
-    public void setCurrentValue(float currentValue) {
+    public RectangleProgressDrawable setCurrentValue(float currentValue) {
         mCurrentValue = currentValue;
-        invalidateSelf();
+        return this;
     }
 
-    public void setDuration(int duration) {
+    public RectangleProgressDrawable setTitle(String title) {
+        mTitle = title;
+        return this;
+    }
+
+    public RectangleProgressDrawable setTitleColor(int titleColor) {
+        mTitleColor = titleColor;
+        return this;
+    }
+
+    public RectangleProgressDrawable setValueUnit(String valueUnit) {
+        mValueUnit = valueUnit;
+        return this;
+    }
+
+    public RectangleProgressDrawable setUnitColor(int unitColor) {
+        mUnitColor = unitColor;
+        return this;
+    }
+
+    public RectangleProgressDrawable setTextPadding(float textPadding) {
+        mTextPadding = textPadding;
+        return this;
+    }
+
+    public RectangleProgressDrawable setTitleSize(int titleSize) {
+        mTitleSize = titleSize;
+        return this;
+    }
+
+    public RectangleProgressDrawable setUnixTextSize(int unixTextSize) {
+        mUnixTextSize = unixTextSize;
+        return this;
+    }
+
+    public RectangleProgressDrawable setDuration(int duration) {
         mDuration = duration;
+        return this;
     }
 
+    /**
+     * 设置 value text 方向
+     *
+     * @param valueGravity 只能是 {@link Gravity#LEFT} 和 {@link Gravity#RIGHT}
+     * @see android.view.Gravity
+     */
+    public RectangleProgressDrawable setValueGravity(int valueGravity) {
+        if (valueGravity == Gravity.LEFT || valueGravity == Gravity.RIGHT) {
+            mValueGravity = valueGravity;
+            return this;
+        } else {
+            throw new IllegalArgumentException("value gravity 只能是 letf 或者 right");
+        }
+    }
 
-    public void startCurrentValue(float currentValue) {
+    public RectangleProgressDrawable startCurrentValue(float currentValue) {
         mFrom = 0f;
         mTo = currentValue;
         mCurrentValue = mFrom;
         mCurrentState = STATUE_START;
-        invalidateSelf();
+        return this;
     }
 
-    public void setTitle(String title) {
-        mTitle = title;
-        invalidateSelf();
-    }
-
-    public void setValueUnit(String valueUnit) {
-        mValueUnit = valueUnit;
-        invalidateSelf();
-    }
-
-    public void setTitleColor(int titleColor) {
-        mTitleColor = titleColor;
-        mTextPaint.setColor(mTitleColor);
-        invalidateSelf();
-    }
-
-    public void setUnitColor(int unitColor) {
-        mUnitColor = unitColor;
-        mTextPaint.setColor(mUnitColor);
-        invalidateSelf();
-    }
-
-    public void setTextPadding(float textPadding) {
-        mTextPadding = textPadding;
-        invalidateSelf();
-    }
-
-    public void setTitleSize(int titleSize) {
-        mTitleSize = titleSize;
-        invalidateSelf();
-    }
-
-    public void setUnixTextSize(int unixTextSize) {
-        mUnixTextSize = unixTextSize;
-        invalidateSelf();
-    }
 
     @NonNull
     private static Rect acquireTempRect() {
@@ -229,6 +247,7 @@ public class RectangleProgressDrawable extends Drawable {
         mTextPaint.setTextSize(mUnixTextSize);
         mTextPaint.getTextBounds(mBottomText, 0, mBottomText.length(), textBounds);
         mBottomHeight = textBounds.height();
+        int unixTextWidth = textBounds.width();
         releaseTmepRect(textBounds);
 
 
@@ -249,22 +268,31 @@ public class RectangleProgressDrawable extends Drawable {
                 break;
         }
 
-        if (mTextPadding == 0)
-            mTextPadding = textWidth;
+        if (mTextPadding == 0) {
+
+            mTextPadding = dpTopx(10f);
+        }
         mBackRect.set((int) (bounds.left + textWidth + mTextPadding), bounds.top, bounds.right, bounds.bottom);
         int right = (int) (mBackRect.width() * (mCurrentValue / mMaxValue) + mBackRect.left);
         mProgressRect.set(mBackRect.left, mBackRect.top, right, mBackRect.bottom);
 
+        //计算文字 X
+        if (mValueGravity == Gravity.RIGHT) {
+            int textCanUseWdith = mBackRect.width() - mProgressRect.width();
+            if (textCanUseWdith > (unixTextWidth + mTextPadding * 2)) {
+                mUnixTextX = mProgressRect.left + mTextPadding;
+            } else {
+                mUnixTextX = mBackRect.right - unixTextWidth - 2 * mTextPadding;
+            }
+        } else {
+            mUnixTextX = mBackRect.left + mTextPadding;
+        }
+        System.out.println("单位文字的 X 值为：" + mUnixTextX);
+
+
         if (!done) {
             invalidateSelf();
         }
-//        System.out.println("backrect：" + mBackRect.toString());
-//        System.out.println("progressrect：" + mProgressRect.toString());
-
-//        int canUseWidth = (int) (mBackRect.width() - mProgressRect.width() - mTextPadding);
-//        resetTextSize(canUseWidth, mTextPaint);
-
-
     }
 
 
@@ -286,20 +314,11 @@ public class RectangleProgressDrawable extends Drawable {
         mBackRect = new Rect();
         mProgressRect = new Rect();
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mMinTextSize = spTopx(10f);
         mTitleSize = spTopx(14f);
         mUnixTextSize = spTopx(14f);
+        mValueGravity = Gravity.LEFT;
     }
 
-    private void resetTextSize(int width, Paint paint) {
-        float textWidth = paint.measureText(mBottomText);
-        boolean ok = textWidth <= width;
-        while (!ok) {
-            mUnixTextSize -= 2;
-            textWidth = paint.measureText(mBottomText);
-            ok = textWidth <= width || mUnixTextSize <= mMinTextSize;
-        }
-    }
 
     private void updateStateFromTypedArray(TypedArray a) {
         mMaxValue = a.getFloat(R.styleable.RectangleProgressDrawable_maxvalue, mMaxValue);
@@ -315,8 +334,8 @@ public class RectangleProgressDrawable extends Drawable {
         mDuration = a.getInt(R.styleable.RectangleProgressDrawable_duration, mDuration);
     }
 
-    private int dpTopx(float dp){
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,dp,mContext.getResources().getDisplayMetrics()));
+    private int dpTopx(float dp) {
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, mContext.getResources().getDisplayMetrics()));
     }
 
     private int spTopx(float sp) {
