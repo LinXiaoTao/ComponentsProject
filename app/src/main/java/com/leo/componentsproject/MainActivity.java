@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 
+/**
+ * 折线图
+ */
 public class MainActivity extends AppCompatActivity {
 
 

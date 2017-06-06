@@ -245,9 +245,9 @@ public class StepIndicatorDrawable extends Drawable {
         mStepLineWidth = dpTopx(2f);
 
         mSeparatorColor = Color.LTGRAY;
-        mDoneGraphColors = new int[]{Color.GREEN, Color.MAGENTA};
+        mDoneGraphColors = new int[]{Color.WHITE, Color.CYAN};
         mUndoneGraphColor = Color.GRAY;
-        mDoneTextColor = Color.MAGENTA;
+        mDoneTextColor = Color.CYAN;
         mUndoneTextColor = Color.LTGRAY;
         mStepLineColor = Color.GRAY;
 

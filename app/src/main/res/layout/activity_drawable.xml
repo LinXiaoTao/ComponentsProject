@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:padding="10dp"
+                  android:orientation="vertical">
+
+        <View
+            android:id="@+id/step"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            />
+
+        <View
+            android:id="@+id/rectangle"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_height="100dp"/>
+
+        <View
+            android:layout_marginTop="10dp"
+            android:id="@+id/cicle"
+            android:layout_width="200dp"
+            android:layout_height="200dp"/>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

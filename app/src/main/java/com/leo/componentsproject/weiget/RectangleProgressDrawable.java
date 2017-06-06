@@ -292,6 +292,8 @@ public class RectangleProgressDrawable extends Drawable {
 
         if (!done) {
             invalidateSelf();
+        } else {
+            mCurrentState = STATUE_NONE;
         }
     }
 
